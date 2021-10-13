@@ -1,0 +1,46 @@
+{% extends "index/nav.html"%}
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        {% block title %} 
+        <title>LogicalVote</title>
+        {% endblock%}
+        {% block css %} 
+        <link rel="stylesheet" href="../static/registers.css">
+        <style>
+            body{
+                color:rgb(106, 105, 110) 
+            }
+           
+        </style>
+        {% endblock%}
+       
+    </head>
+    <body>
+        {% block container %}
+
+        <form class="login" method="POST">
+            {% csrf_token %}{% if form.errors %}
+            <p>{{form.errors}}</p> {% endif %}
+            
+            <label class="label">{{form.first_name.label}}</label> {{form.first_name}}
+
+            <label class="label">{{form.last_name.label}}</label> {{form.last_name}}
+
+            <label class="label">{{form.email.label}}</label> {{form.email}}
+        
+            <label class="label">{{form.username.label}}</label> {{form.username}}
+        
+            <label class="label">{{form.password1.label}}</label> {{form.password1}}
+        
+            <label class="label">{{form.password2.label}}</label> {{form.password2}}
+
+            <button>Registrar</button>
+          </form>
+          
+          {% endblock %} 
+    </body>
+    </html>

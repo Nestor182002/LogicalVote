@@ -1,0 +1,88 @@
+
+
+{% extends "index/nav.html"%}
+{% block title %} 
+<title>New Votes</title>
+{% endblock%}
+{% block css %} 
+<style>
+    h1{
+        text-align: center;
+        color: #FF1979;
+    }
+    .father{
+        width: 350px;
+        margin: auto;
+        margin-top: 100px;
+        text-align: justify;
+    }
+    form{
+        display: flex;
+        flex-direction: column;
+    }
+    .title{
+       display: flex;
+       flex-direction: column;
+    }
+    .categorias{
+        display: flex;
+       flex-direction: column; 
+    }
+    label{
+        font-size: 20px;
+        font-weight: bold;
+    }
+    p{
+        color: #004884;
+        text-align: center;
+    }
+    input{
+        border: 2px solid #eee;
+        cursor: pointer;
+    }
+    textarea{
+        width: 100%;
+        border: 2px solid #eee;
+        cursor: pointer;
+    }
+    select{
+        border: 2px solid #eee;
+        cursor: pointer;
+    }
+
+</style>
+
+{% endblock%}
+
+{% block container %}
+
+<div class="father">
+    {% if error %}  
+    <p class="error">{{error}}</p>     
+    
+    {% endif %}
+    <div>
+        <h1>New Votes<i class="fas fa-location-arrow"></i></h1>
+    </div>
+    <form  method="POST">
+        {% csrf_token %}
+        <div class="title">
+            <label>Titulo</label>
+            {{form.title}}
+        </div>
+        <div class="body">
+            <label>Texto</label>
+            {{form.body}}
+        </div>
+        <div class="categorias">
+            <label>Categorias</label>
+            {{form.categorys}}
+            <p>Por favor elegir una o varias categorias(Mantener Ctrl)</p>
+        </div>
+        <input type="submit" value="Subir" class="public">
+    </form>
+
+</div>
+
+
+{% endblock %} 

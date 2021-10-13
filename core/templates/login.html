@@ -1,0 +1,38 @@
+
+{% extends "index/nav.html"%}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {% block title %} 
+    <title>LogicalVote/login</title>
+    {% endblock%}
+    {% block css %} 
+    <link rel="stylesheet" href="../static/logins.css">
+    <style>
+        body{
+            color:rgb(106, 105, 110) 
+        }
+       
+    </style>
+    {% endblock%}
+    
+</head>
+<body>
+    {% block container %}
+    
+    <form class="login" method="POST">
+        {% csrf_token %}
+        
+        <input class="inp" type="text" name="username" placeholder="Username">
+        <input class="inp" type="password" name="password" placeholder="Password">
+        
+        <button>Ingresar</button>
+        <div class="errors">{{form.errors}}</div>
+      </form>
+      
+{% endblock %}   
+</body>
+</html>

@@ -1,0 +1,200 @@
+{% extends "index/nav.html"%}
+{% block title %} 
+<title>Votaciones</title>
+{% endblock%}
+{% block css %} 
+<style>
+/* container */
+    #globalcontainer{
+        margin: auto;
+        background-color: #F7F8F9;
+    }
+    #container{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 1200px;
+        margin: auto;
+    }
+    .list{
+        flex-basis: 380px;
+        margin: 5px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 16px;
+        border: 2px solid rgb(230, 235, 241);
+        box-shadow: 5px 5px 10px #efefef;
+        text-align: center;
+    }
+    /* list element */
+    .list:nth-child(1){
+    flex-basis: 800px;
+    }
+    .list:nth-child(2){
+    flex-basis: 350px;
+    }
+    .list:nth-child(6){
+    flex-basis: 350px;
+    }
+    .list:nth-child(7){
+    flex-basis: 800px;
+    }
+    /* texto */
+    .txt{
+        word-break: break-all;
+      
+    }
+    h2{
+        text-align: center;
+    }
+    p{
+        color:rgb(106, 105, 110) 
+    }
+    .cate {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+    }
+    .cate div{
+        background-color: #F5E5CE;
+        width: 100px;
+        margin-right: 5px;
+        padding: 1px;
+        text-align: center;
+        border-radius: 16px;
+        color: coral;
+    }
+    .cate div p{
+        color: coral;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .votes{
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    .votes div{
+        margin: 5px;
+        font-weight: bold;
+        font-size: 18px;
+        color: dimgrey;
+    }
+    .votes div p{
+        font-weight: bold;
+        color: black;
+    }
+    .redi{
+        text-decoration: none;
+        background-color: rgb(252 110 110);
+    padding: 7px;
+    border-radius: 16px;
+    color: white;
+    }
+
+</style>
+
+{% endblock%}
+
+{% block container %}
+<div id="globalcontainer">
+
+<div id="container">
+    
+</div>
+
+<div id="categorys">
+
+</div>
+
+<div class="pagination" id="pagination">
+
+</div>
+
+</div>
+
+{% endblock %} 
+
+
+
+
+
+
+
+{% block js %}
+    <script>
+        let urlGet='http://localhost:8000/listApi/?page=1';
+        let prevlink='';
+        let nextlink='';
+        let containerlink=document.getElementById('pagination');
+        async function hello(url) { 
+            let containers= document.getElementById('container')
+        let response = await fetch(url);
+    
+        if (!response.ok) {
+            containers.innerHTML='<h1 class="404">404 Not found <span>Solicitud no encontrada</></h1>'
+        }
+        const data = await response.json();
+        // limpio el container para poner los datos nuevos
+        containers.innerHTML='';
+        data.results.forEach(element => {
+           let body= element.body.slice(0,85)
+            containers.innerHTML+=`
+        <div class="list">
+
+            <div>
+            <h2 class="txt">${element.title}</h2>
+            <p class="txt">${body}</p>
+            </div>
+
+            <div id="category${element.id}" class="cate" name="prueba">
+                
+            </div>
+            <div class="votes">
+                <div class="total_yes">Si:<p>${element.total_yes}</p></div>
+                <div class="total_yes"> No:<p>${element.total_no}</p></div>
+               
+            </div>
+
+            <div>
+
+                 <a href='{% url "detail" %}?post=${element.id}' class="redi"><i class="fas fa-person-booth"></i>Votes</a>
+          </div>
+           
+        </div>
+        ` 
+        
+        // categorias
+        let cate=document.getElementsByName("prueba");
+        element.categorys.forEach(elements => {
+            let div = document.createElement("div")
+            div.innerHTML+=`
+            <p>${elements.type}</p>
+            ` 
+           document.getElementById("category" + element.id).append(div)
+            
+            });
+ 
+        });  
+        // pagination links
+        prevlink= data.previous ? `<a href="${data.previous}"><i class="far fa-hand-point-left"></i>Atras</a>`:'';   
+        nextlink= data.next ? `<a href="${data.next }">Siguiente<i class="far fa-hand-point-right"></i></a>`:'';
+        containerlink.innerHTML=prevlink + "" + nextlink
+ };
+     hello(urlGet)
+// link url programming
+let list =document.getElementById('globalcontainer')
+list.addEventListener('click',(e)=>{
+if(e.target.matches(".pagination a")){
+    hello(e.target.getAttribute("href"));
+
+    e.preventDefault()
+}
+
+})
+
+
+
+
+    </script>
+{% endblock%}

@@ -1,0 +1,258 @@
+{% extends "index/nav.html"%}
+{% block title %} 
+<title>Votaciones</title>
+{% endblock%}
+
+{% block css %} 
+<style>
+    .container_global{
+        width: 350px;
+        margin: auto;
+        margin-top: 100px;
+        text-align: justify;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    h1{
+        color: #FF1979;
+        word-break: break-all;
+    }
+    .cate{
+        display: flex;
+        flex-direction: row;
+        color: coral;
+        text-align: center;
+        justify-content: space-between;
+        
+        
+    }
+    .cate div{
+        width: 70px;
+        background-color: #F5E5CE;
+        border-radius: 16px;
+        margin-right: 5px;
+        
+    }
+    .total{
+        display: flex;
+        justify-content: space-between;
+    }
+    .form_container{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    form{
+        width: 100%;
+
+    }
+    button{
+        width: 50%;
+        margin: 10px;
+        padding: 10px;
+        border:none;
+        cursor: pointer;
+        background-color: #eee;
+        border-radius: 16px;
+        font-size: 18px;
+        color: cornflowerblue;
+    }
+    p{
+        word-break: break-all;
+    }
+
+</style>
+
+{% endblock%}
+
+{% block container %}
+<div class="container_global">
+<div id="container">
+
+
+</div class="form_container">
+<form method="POST" id="yesform">
+    {% csrf_token %}
+    <button id="btn_yes" data-postyes=""><i class="fas fa-smile-wink"></i>Yes</button>
+</form>
+<form method="POST" id="noform">
+    {% csrf_token %}
+    <button id="btn-no" data-postno=""><i class="fas fa-grin-beam-sweat"></i>No</button>
+</form>
+</div>
+
+
+
+
+
+</div>
+
+
+
+</div>
+    
+
+
+        
+
+{% endblock %} 
+
+
+
+
+{% block js %}
+    <script>
+
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var anuncioParam = urlParams.get('post');
+
+        async function hello() { 
+            let containers= document.getElementById('container')
+        let response = await fetch(' http://localhost:8000/detail/'+anuncioParam);
+        if (!response.ok) {
+            containers.innerHTML='<h1>404 Not found :C</h1>'
+        }else{
+            if(response.status == 203){
+                containers.innerHTML='<h1 class="isclosed">Esta votacion esta cerrada :(</h1>'
+            }
+            else{
+
+                const data = await response.json();
+
+            // categorias class y text
+            containers.innerHTML+=`
+            <div>
+
+            <div>
+            <h1>${data.title}</h1>
+            <p>${data.body}</p>
+            </div>
+
+            <div id="category${data.id}" class="cate" name="prueba">
+                
+            </div>
+            <div class="total">
+                <p>${data.total_yes}</p>
+                <p>${data.total_no}</p>
+            </div>
+
+
+
+            </div>
+            ` 
+
+            // categorias
+            let cate=document.getElementsByName("prueba");
+            data.categorys.forEach(elements => {
+            let div = document.createElement("div")
+            div.innerHTML+=`
+            <p>${elements.type}</p>
+            ` 
+            document.getElementById("category" + data.id).append(div)
+
+            });
+            //like url
+            document.getElementById('btn_yes').dataset.postyes=`${data.id}`
+            document.getElementById('btn-no').dataset.postno=`${data.id}`
+
+            }
+
+
+
+        }
+        
+ };
+     hello()
+
+
+
+
+
+   // ---------posts y token
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    const csrftoken = getCookie('csrftoken');
+
+
+
+    // yes vote
+    let yes= document.getElementById('yesform');
+    yes.addEventListener("click", function( event ){
+        event.preventDefault();   
+        let postid= document.getElementById('btn_yes').dataset.postyes;
+        postyes(postid)
+        location.reload();
+    })
+
+// yes vote function
+    async function postyes(postid) {
+        
+        const settings = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+
+         };
+        try {
+            const fetchResponse = await fetch(`http://localhost:8000/yes/${postid}`, settings);
+            const data = await fetchResponse.json();
+            return data;
+            
+        } catch (e) { 
+            return e;
+        }    
+    }  
+
+    // no vote
+    let no= document.getElementById('noform');
+    no.addEventListener("click", function( event ){
+        event.preventDefault();   
+        let postid= document.getElementById('btn-no').dataset.postno;
+         postno(postid)
+        location.reload();
+    })
+
+    // no vote function
+    async function postno(postid) {
+        
+        const settings = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+
+         };
+        try {
+            const fetchResponse = await fetch(`http://localhost:8000/no/${postid}`, settings);
+            const data = await fetchResponse.json();
+            console.log(data)
+            return data;
+            
+        } catch (e) { 
+            return e;
+        }    
+    }   
+    
+    </script>
+{% endblock%}

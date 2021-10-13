@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+<!-- font-family: 'Nunito', sans-serif; -->
+
+    {% block title %} 
+  
+    {% endblock%}
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
+.topnav {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: end;
+  border-bottom: 1px solid #f5f5f5;
+  margin-right: 10px;
+  
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color:rgb(75, 74, 74) ;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  transition: .5s;
+
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+text-decoration: underline;
+color: #35B879;
+font-size: 17px;
+
+}
+.topnav .back{
+  color: #FF6648;
+}
+.name{
+  position: absolute;
+  left: 10px;
+  top:0;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+.name span{
+color:rgb(252, 110, 110);
+}
+
+body{
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Add a color to the active/current link */
+
+
+    </style>
+    {% block css %} 
+  
+    {% endblock%}  
+
+</head>
+<body>
+  
+    <div class="topnav">
+        <h2 class="name">Logical<span>Vote</span></h2>
+        <a class="active" href="{% url "Inicio"  %}"><i class="fab fa-pagelines"></i>Inicio</a>
+        {% if not request.user.is_authenticated %}
+        <a class="" href="/login">Login</a>
+        <a href="/register">Registro</a>
+        {% else %}
+        <a href='{% url "votes"  %}'><i class="fas fa-globe-americas"></i>Tod@s</a>
+        <a href="/newvotes/"><i class="fas fa-plus"></i>Agregar Votacion</a>
+        <a href="{% url "mylist"  %}"><i class="far fa-user"></i>Mis Posts </a>        
+        <a href='{% url "logout"  %}' class="back"><i class="fas fa-arrow-circle-left"></i>Salir</a>
+        {% endif %} 
+      </div>
+     
+      
+      {% block container %} {% endblock%}
+
+      {% block js %} {% endblock%}
+</body>
+</html>

@@ -1,0 +1,206 @@
+{% extends "index/nav.html"%}
+{% block title %} 
+<title>My Lists</title>
+{% endblock%}
+{% block css %} 
+<style>
+    #list{
+        width: 100%;
+        margin: 0;
+    }
+    .father{
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        
+    }
+    .init{
+        width: 500px;
+        text-align: center;
+        box-shadow: 2px 7px 12px #cacaca;
+        margin: 10px;
+        position: relative;
+        padding: 5px;
+    }
+    .init h1{
+        color:black;
+        font-size: 18px;
+    }
+    .list{
+        width: 100%;
+
+    }
+    .list h1{
+        text-align: center;
+    }
+    .total{
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* texto */
+    .txt{
+        word-break: break-all;
+      
+    }
+    p{
+        color:#505056;
+    }
+    span{
+        color:#FF1979;
+        font-size: 18px;
+        font-weight: bold;
+        
+    }
+    span:nth-child(1){
+        margin-right: 20px;
+    }
+    ul{
+        list-style: none;
+        text-align: -webkit-center;
+        
+    }
+    li{
+        background-color: #f5e5ce;
+        width: 100px;
+        padding: 5px;
+        border-radius: 16px;
+        color: #ff6648;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+</style>
+
+{% endblock%}
+
+{% block container %}
+
+<div id="list">
+            
+            <div class="list">
+                <h1>Mi lista</h1>
+            </div>
+
+            <div class="father">
+                    {% for v in object_list %}                      
+            <div class="init">
+                <div class="text">
+                    <h1 class="txt">{{v.title}}</h1>
+                    <span><i class="far fa-user"></i>{{v.user_create}}</span>
+                    <p class="txt">{{v.body}}</p>
+                        <div class="category">
+                                <ul>
+                                    {% for cate in v.categorys.all %}
+                                    <li class="cate">
+                                        {{cate}}
+                                    </li>
+                                    
+                                    {%endfor%}
+                                    <div class="total">
+                                        <span>Si:<p>{{v.yes_opine.count}}</p> </span> 
+                                        <span>No:<p>{{v.No_opine.count}}</p></span>   
+                                    </div>
+
+                                </ul>
+                        </div>
+
+                </div>
+                
+                <div class="closed">           
+                    <button  data-id="{{v.id}}"><i class="fas fa-door-closed"></i>{% if v.isclosed %}Abrir{% else%}Cerrar {% endif%} Votos</button>
+                </div>
+
+
+</div>
+
+        {% endfor %}
+        </div>
+</div>
+
+<!-- pagination -->
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="regreso">&laquo; Inicio</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="regreso">Anterior</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }} " class="siguiente">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }} " class="siguiente">Ultima &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %} 
+
+
+
+{% block js %}
+<script>
+
+// closed
+let list=document.getElementById('list');
+list.addEventListener("click", function( event ){
+    event.preventDefault();   
+    
+    if(event.target.dataset.id == undefined){
+        
+    }else{
+        let id=event.target.dataset.id;
+        closedApi(id)   
+        location.reload()
+    }
+})
+
+
+// ---------put y token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    const csrftoken = getCookie('csrftoken');
+
+// close function
+async function closedApi(id) {
+    
+    const settings = {
+    method: 'PUT',
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+    },
+
+     };
+    try {
+        const fetchResponse = await fetch(`http://localhost:8000/closed/${id}`, settings);
+        const data = await fetchResponse.json();
+        return data;
+        
+    } catch (e) { 
+        return e;
+    }    
+}   
+
+</script>
+{% endblock%}
+
